@@ -85,6 +85,7 @@ static int parse_args(all_args_t* args, int argc, char* argv[])
   // clang-format off
   common.add_options()
     ("ue.signal_storm", bpo::value<bool>(&args->enable_signal_storm)->default_value(false), "Enable a signalling storm attack")
+    ("ue.signal_storm_cycle_interval_ms", bpo::value<uint32_t>(&args->signal_storm_cycle_interval_ms)->default_value(0), "Signal storm attack cycle interval in milliseconds")
     ("ue.radio", bpo::value<string>(&args->rf.type)->default_value("multi"), "Type of the radio [multi]")
     ("ue.phy", bpo::value<string>(&args->phy.type)->default_value("lte"), "Type of the PHY [lte]")
 

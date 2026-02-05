@@ -89,6 +89,7 @@ typedef struct {
 
   general_args_t general;
 	bool enable_signal_storm;
+	uint32_t signal_storm_cycle_interval_ms;
 } all_args_t;
 
 /*******************************************************************************

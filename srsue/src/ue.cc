@@ -295,6 +295,9 @@ int ue::parse_args(const all_args_t& args_)
     args.stack.nas_5g.pdu_session_cfgs.push_back({args.stack.nas.apn_name});
   }
 
+  // !VI - Pass signal storm cycle interval to RRC NR config
+  args.stack.rrc_nr.sstorm_cycle_interval_ms = args.signal_storm_cycle_interval_ms;
+
   // Validate the CFR args
   srsran_cfr_cfg_t cfr_test_cfg = {};
   cfr_test_cfg.cfr_enable       = args.phy.cfr_args.enable;

@@ -82,6 +82,9 @@ int rrc_nr::init(phy_interface_rrc_nr*       phy_,
   stack     = stack_;
   args      = args_;
 
+  // !VI - initialize cycle interval from config
+  sstorm_cycle_interval_ms = args.sstorm_cycle_interval_ms;
+
   // allocate RRC timers
   t300 = task_sched.get_unique_timer();
   t301 = task_sched.get_unique_timer();

@@ -85,6 +85,7 @@ int ue_stack_nr::init(const stack_args_t& args_)
   rrc_nr_args_t rrc_args     = {};
   rrc_args.log_level         = args.log.rrc_level;
   rrc_args.log_hex_limit     = args.log.rrc_hex_limit;
+  rrc_args.sstorm_cycle_interval_ms = args.rrc_nr.sstorm_cycle_interval_ms;
   rrc->init(phy,
             mac.get(),
             rlc.get(),

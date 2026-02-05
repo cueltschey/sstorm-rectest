@@ -64,7 +64,7 @@ public:
   uint32_t sstorm_consecutive_failures = 0;
   const uint32_t sstorm_max_consecutive_failures = 10;
   const uint32_t sstorm_max_rogue = 999999999;
-  const uint32_t sstorm_cycle_interval_ms = 0;
+  uint32_t sstorm_cycle_interval_ms;
 
   // !vi cached parameters
   bool sstorm_cache_cell = false;
