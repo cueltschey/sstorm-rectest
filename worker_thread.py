@@ -7,7 +7,7 @@ class sstorm(WorkerThread):
         self.cleanup_old_containers()
         self.setup_env()
         self.setup_networks()
-        self.config.container_volumes[self.config.config_file] = {"bind": "/sstorm.conf", "mode": "ro"}
+        self.config.container_volumes[self.config.config_file] = {"bind": "/ue.conf", "mode": "ro"}
         self.setup_volumes()
 
         self.start_container()
