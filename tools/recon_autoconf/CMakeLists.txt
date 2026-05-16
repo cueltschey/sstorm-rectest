@@ -6,7 +6,7 @@ find_package(RtRecon QUIET)
 
 option(ENABLE_RECON_AUTOCONF "Enable auto-configuration from InfluxDB recon data" ${RT_RECON_FOUND})
 
-if(ENABLE_RECON_AUTOCONF AND RT_RECON_FOUND)
+if(ENABLE_RECON_AUTOCONF AND RT_RECON_FOUND AND TARGET rt_recon_sdk)
   add_executable(sstorm_autoconf
     sstorm_autoconf.cc
   )
@@ -25,5 +25,5 @@ if(ENABLE_RECON_AUTOCONF AND RT_RECON_FOUND)
 
   message(STATUS "Building sstorm_autoconf: auto-configuration from InfluxDB recon data")
 else()
-  message(STATUS "sstorm_autoconf disabled (RtRecon not found)")
+  message(STATUS "sstorm_autoconf disabled (RtRecon SDK library not available)")
 endif()

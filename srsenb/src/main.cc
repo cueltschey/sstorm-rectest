@@ -530,20 +530,18 @@ void parse_args(all_args_t* args, int argc, char* argv[])
     rcfg.bucket   = recon_bucket;
     rcfg.data_id  = recon_data_id;
 
-    rt_recon::CellConfig  cell;
-    rt_recon::PrachConfig prach;
-    rt_recon::MibData     mib;
+    sstorm::ReconData data;
 
-    if (sstorm::pull_recon_data(rcfg, cell, prach, mib)) {
-      sstorm::print_recon_summary(cell);
+    if (sstorm::pull_recon_data(rcfg, data)) {
+      sstorm::print_recon_summary(data);
 
-      if (cell.dl_arfcn > 0)       args->enb.dl_earfcn = cell.dl_arfcn;
-      if (cell.nof_prb > 0)        args->enb.n_prb = cell.nof_prb;
-      if (cell.tx_gain > 0.0)      args->rf.tx_gain = (float)cell.tx_gain;
-      if (cell.rx_gain > 0.0)      args->rf.rx_gain = (float)cell.rx_gain;
-      if (cell.dl_freq > 0.0)      args->rf.dl_freq = (float)cell.dl_freq;
-      if (cell.ul_freq > 0.0)      args->rf.ul_freq = (float)cell.ul_freq;
-      if (cell.sample_rate > 0.0)  args->rf.srate_hz = cell.sample_rate;
+      if (data.dl_arfcn > 0)       args->enb.dl_earfcn = data.dl_arfcn;
+      if (data.nof_prb > 0)        args->enb.n_prb = data.nof_prb;
+      if (data.tx_gain > 0.0)      args->rf.tx_gain = (float)data.tx_gain;
+      if (data.rx_gain > 0.0)      args->rf.rx_gain = (float)data.rx_gain;
+      if (data.dl_freq > 0.0)      args->rf.dl_freq = (float)data.dl_freq;
+      if (data.ul_freq > 0.0)      args->rf.ul_freq = (float)data.ul_freq;
+      if (data.sample_rate > 0.0)  args->rf.srate_hz = data.sample_rate;
 
       std::cout << "[RECON] Overrides applied to eNB configuration" << std::endl;
     } else {

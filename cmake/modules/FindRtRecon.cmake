@@ -1,19 +1,15 @@
 # FindRtRecon.cmake - Find the RT Recon SDK
 #
-# This module finds the rt-recon-sdk library, which provides
+# This module finds the rt-recon-sdk include directory for
 # InfluxDB-based auto-configuration for sstorm-rectest.
 #
 # Variables:
 #   RT_RECON_FOUND        - True if rt-recon-sdk was found
 #   RT_RECON_INCLUDE_DIRS - Include directories
-#   RT_RECON_LIBRARIES    - Libraries to link against
+#   RT_RECON_LIBRARIES    - Libraries to link against (empty, header-only)
 #
-# It also creates an imported target rt_recon_sdk.
-
-# Search priority:
-# 1. RT_RECON_DIR environment variable
-# 2. Adjacent rt-recon-sdk directory (sibling to sstorm-rectest)
-# 3. Standard system paths
+# The header-only library influxdb.hpp is used directly;
+# no library linking is required.
 
 if(NOT RT_RECON_ROOT)
   if(DEFINED ENV{RT_RECON_DIR})
@@ -24,41 +20,26 @@ if(NOT RT_RECON_ROOT)
 endif()
 
 find_path(RT_RECON_INCLUDE_DIR
-  NAMES rt_recon/recon_data.h
+  NAMES rt-recon-sdk/autoconfig/influxdb.hpp
   PATHS
     ${RT_RECON_ROOT}/include
     /usr/local/include
     /usr/include
 )
 
-find_library(RT_RECON_LIBRARY
-  NAMES rt_recon_sdk
-  PATHS
-    ${RT_RECON_ROOT}/build
-    ${RT_RECON_ROOT}/build/lib
-    /usr/local/lib
-    /usr/lib
-)
-
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(RtRecon
-  REQUIRED_VARS RT_RECON_LIBRARY RT_RECON_INCLUDE_DIR
+  REQUIRED_VARS RT_RECON_INCLUDE_DIR
   FAIL_MESSAGE "rt-recon-sdk not found. Set RT_RECON_DIR or install rt-recon-sdk."
 )
 
-if(RT_RECON_FOUND)
+# CMake 4.x sets RtRecon_FOUND (case-sensitive), older versions use RT_RECON_FOUND
+if(RtRecon_FOUND)
+  set(RT_RECON_FOUND TRUE)
   set(RT_RECON_INCLUDE_DIRS ${RT_RECON_INCLUDE_DIR})
-  set(RT_RECON_LIBRARIES ${RT_RECON_LIBRARY})
+  set(RT_RECON_LIBRARIES "")
 
-  if(NOT TARGET rt_recon_sdk)
-    add_library(rt_recon_sdk UNKNOWN IMPORTED)
-    set_target_properties(rt_recon_sdk PROPERTIES
-      IMPORTED_LOCATION "${RT_RECON_LIBRARY}"
-      INTERFACE_INCLUDE_DIRECTORIES "${RT_RECON_INCLUDE_DIRS}"
-    )
-  endif()
-
-  message(STATUS "RtRecon found: include=${RT_RECON_INCLUDE_DIRS}, libs=${RT_RECON_LIBRARIES}")
+  message(STATUS "RtRecon found: include=${RT_RECON_INCLUDE_DIRS} (header-only)")
 endif()
 
-mark_as_advanced(RT_RECON_INCLUDE_DIR RT_RECON_LIBRARY RT_RECON_ROOT)
+mark_as_advanced(RT_RECON_INCLUDE_DIR RT_RECON_ROOT)
