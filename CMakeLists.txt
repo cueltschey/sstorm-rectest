@@ -637,6 +637,7 @@ endfunction()
 ########################################################################
 include_directories(${PROJECT_BINARY_DIR}/lib/include)
 include_directories(${PROJECT_SOURCE_DIR}/lib/include)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 ########################################################################
 # Add headers to cmake project (useful for IDEs)
@@ -655,6 +656,19 @@ add_custom_target(add_srsran_headers SOURCES ${HEADERS_ALL})
 # Add the subdirectories
 ########################################################################
 add_subdirectory(lib)
+
+# RT Recon SDK for auto-configuration
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+find_package(RtRecon QUIET)
+if(RT_RECON_FOUND)
+  message(STATUS "Found rt-recon-sdk: ${RT_RECON_LIBRARY}")
+  add_definitions(-DHAVE_RT_RECON)
+else()
+  message(STATUS "rt-recon-sdk not found - auto-configuration from InfluxDB will not be available")
+endif()
+
+# Recon auto-configuration tool
+add_subdirectory(tools/recon_autoconf)
 
 if(RF_FOUND)
   if(ENABLE_SRSUE)

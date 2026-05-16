@@ -49,6 +49,10 @@
 #include "srsenb/hdr/metrics_stdout.h"
 #include "srsran/common/enb_events.h"
 
+#ifdef HAVE_RT_RECON
+#include "recon_autoconf.h"
+#endif
+
 using namespace std;
 using namespace srsenb;
 namespace bpo = boost::program_options;
@@ -68,6 +72,13 @@ void parse_args(all_args_t* args, int argc, char* argv[])
   string enb_id;
   string cfr_mode;
   bool   use_standard_lte_rates = false;
+  bool        recon_enable   = false;
+  std::string recon_host     = "localhost";
+  uint32_t    recon_port     = 8086;
+  std::string recon_org;
+  std::string recon_token;
+  std::string recon_bucket   = "rtusystem";
+  std::string recon_data_id;
 
   // Command line only options
   bpo::options_description general("General options");
@@ -304,6 +315,15 @@ void parse_args(all_args_t* args, int argc, char* argv[])
     ("scheduler.nr_pdsch_mcs", bpo::value<int>(&args->nr_stack.mac.sched_cfg.fixed_dl_mcs)->default_value(28), "Fixed NR DL MCS (-1 for dynamic).")
     ("scheduler.nr_pusch_mcs", bpo::value<int>(&args->nr_stack.mac.sched_cfg.fixed_ul_mcs)->default_value(28), "Fixed NR UL MCS (-1 for dynamic).")
     ("expert.nr_pusch_max_its", bpo::value<uint32_t>(&args->phy.nr_pusch_max_its)->default_value(10),     "Maximum number of LDPC iterations for NR.")
+
+    // Recon auto-configuration section
+    ("recon.enable",   bpo::value<bool>(&recon_enable)->default_value(false),   "Enable InfluxDB auto-configuration")
+    ("recon.host",     bpo::value<std::string>(&recon_host)->default_value("localhost"), "InfluxDB host")
+    ("recon.port",     bpo::value<uint32_t>(&recon_port)->default_value(8086), "InfluxDB HTTP port")
+    ("recon.org",      bpo::value<std::string>(&recon_org)->default_value(""), "InfluxDB organisation")
+    ("recon.token",    bpo::value<std::string>(&recon_token)->default_value(""), "InfluxDB token")
+    ("recon.bucket",   bpo::value<std::string>(&recon_bucket)->default_value("rtusystem"), "InfluxDB bucket")
+    ("recon.data_id",  bpo::value<std::string>(&recon_data_id)->default_value(""), "sni5gect_data_id tag filter")
   ;
 
   // Positional options - config file location
@@ -498,6 +518,40 @@ void parse_args(all_args_t* args, int argc, char* argv[])
   }
 
   srsran_use_standard_symbol_size(use_standard_lte_rates);
+
+#ifdef HAVE_RT_RECON
+  if (recon_enable) {
+    sstorm::ReconConfig rcfg;
+    rcfg.enable   = recon_enable;
+    rcfg.host     = recon_host;
+    rcfg.port     = recon_port;
+    rcfg.org      = recon_org;
+    rcfg.token    = recon_token;
+    rcfg.bucket   = recon_bucket;
+    rcfg.data_id  = recon_data_id;
+
+    rt_recon::CellConfig  cell;
+    rt_recon::PrachConfig prach;
+    rt_recon::MibData     mib;
+
+    if (sstorm::pull_recon_data(rcfg, cell, prach, mib)) {
+      sstorm::print_recon_summary(cell);
+
+      if (cell.dl_arfcn > 0)       args->enb.dl_earfcn = cell.dl_arfcn;
+      if (cell.nof_prb > 0)        args->enb.n_prb = cell.nof_prb;
+      if (cell.tx_gain > 0.0)      args->rf.tx_gain = (float)cell.tx_gain;
+      if (cell.rx_gain > 0.0)      args->rf.rx_gain = (float)cell.rx_gain;
+      if (cell.dl_freq > 0.0)      args->rf.dl_freq = (float)cell.dl_freq;
+      if (cell.ul_freq > 0.0)      args->rf.ul_freq = (float)cell.ul_freq;
+      if (cell.sample_rate > 0.0)  args->rf.srate_hz = cell.sample_rate;
+
+      std::cout << "[RECON] Overrides applied to eNB configuration" << std::endl;
+    } else {
+      std::cerr << "[RECON] WARNING: No recon data found in InfluxDB" << std::endl;
+      std::cerr << "[RECON] WARNING: Continuing with config file values" << std::endl;
+    }
+  }
+#endif
 }
 
 static bool do_metrics = false;

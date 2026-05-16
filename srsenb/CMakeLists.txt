@@ -36,6 +36,7 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
     ${SEC_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}
+    ${RT_RECON_INCLUDE_DIRS}
 )
 
 link_directories(

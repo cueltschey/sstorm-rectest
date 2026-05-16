@@ -464,3 +464,27 @@ enable = false
 #rx_gain_offset = 62
 #mac_prach_bi         = 0
 #use_cedron_f_est_alg = false
+
+#####################################################################
+# Recon auto-configuration from InfluxDB
+#
+# When enabled, srsenb will pull band_report / channel_config /
+# mib / prach_cfg from InfluxDB (written by sni5gect-compact shadower)
+# at startup and override the [enb] and [rf] parameters below.
+#
+# enable:       Enable auto-configuration (true/false)
+# host:         InfluxDB hostname or IP
+# port:         InfluxDB HTTP port
+# org:          InfluxDB organisation
+# token:        InfluxDB API token
+# bucket:       InfluxDB bucket (default: rtusystem)
+# data_id:      sni5gect_data_id tag value to filter on
+#####################################################################
+[recon]
+#enable  = false
+#host    = localhost
+#port    = 8086
+#org     =
+#token   =
+#bucket  = rtusystem
+#data_id =

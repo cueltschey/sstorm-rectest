@@ -52,7 +52,8 @@ target_link_libraries(srsenb  ${SRSENB_SOURCES}
                               ${Boost_LIBRARIES}
                               ${SEC_LIBRARIES}
                               ${LIBCONFIGPP_LIBRARIES}
-                              ${SCTP_LIBRARIES})
+                              ${SCTP_LIBRARIES}
+                              ${RT_RECON_LIBRARIES})
 
 if (RPATH)
   set_target_properties(srsenb PROPERTIES INSTALL_RPATH ".")
