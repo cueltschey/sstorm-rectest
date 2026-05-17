@@ -34,8 +34,12 @@ RUN apt-get update && apt-get upgrade -y && \
     libuhd-dev \
     git
 
+# Clone and install the header-only RT Recon SDK for auto-configuration
+RUN git clone https://github.com/cueltschey/rt-recon-sdk.git /tmp/rt-recon-sdk && \
+    cp -r /tmp/rt-recon-sdk/include/rt-recon-sdk /usr/local/include/ && \
+    rm -rf /tmp/rt-recon-sdk
 
-RUN git clone https://github.com/aevyy/signal-storm /app
+COPY . /app
 
 RUN mkdir -p /app/build
 

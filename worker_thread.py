@@ -3,7 +3,7 @@ from worker_thread import WorkerThread
 
 class sstorm(WorkerThread):
     def start(self):
-        self.config.image_name = "ghcr.io/oran-testing/sstorm"
+        self.config.image_name = "ghcr.io/cueltschey/sstorm-rectest"
         self.cleanup_old_containers()
         self.setup_env()
         self.setup_networks()
